@@ -1,6 +1,6 @@
 # Data Quality Dashboard
 
-This project is an interactive **Power BI dashboard** focused on **data quality analysis and remediation** using Power Query and structured data transformation.
+An end-to-end data quality project demonstrating **data cleaning, transformation, and visualization** using Power BI and Power Query.
 
 ---
 
