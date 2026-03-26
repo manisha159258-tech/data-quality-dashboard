@@ -47,3 +47,6 @@ Raw Data → Data Cleaning (Power Query) → Flag Creation → Dashboard Visuali
 ## 🎥 Video Demo
 
 A quick walkthrough of both dashboards is included in this repository.
+
+© 2026 Manisha Vishwakarma  
+All rights reserved. This project may be viewed and downloaded for **personal or educational use only**. Commercial use or claiming it as your own is prohibited.
