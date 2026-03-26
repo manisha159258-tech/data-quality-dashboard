@@ -1,0 +1,146 @@
+// Clean_Data
+let
+    // 1️⃣ SOURCE
+    Source = Excel.CurrentWorkbook(){[Name="Table5"]}[Content],
+    BufferedSource = Table.Buffer(Source),
+
+    // 2️⃣ TYPE CONVERSION
+    #"Changed Type" = Table.TransformColumnTypes(BufferedSource,{
+        {"Customer_ID", type text}, {"Age", Int64.Type}, {"Income", Int64.Type},
+        {"Credit_Score", Int64.Type}, {"Credit_Utilization", type number},
+        {"Missed_Payments", Int64.Type}, {"Delinquent_Account", Int64.Type},
+        {"Loan_Balance", Int64.Type}, {"Debt_to_Income_Ratio", type number},
+        {"Employment_Status", type text}, {"Account_Tenure", Int64.Type},
+        {"Credit_Card_Type", type text}, {"Location", type text}
+    } & List.Transform(
+        List.Select(Table.ColumnNames(Source), each Text.StartsWith(_, "Month_")),
+        each {_, type text}
+    )),
+
+    // 3️⃣ STATISTICS
+    MedianIncome = List.Median(List.RemoveNulls(#"Changed Type"[Income])),
+    MeanCreditScore = List.Average(List.RemoveNulls(#"Changed Type"[Credit_Score])),
+    MedianLoanBalance = List.Median(List.RemoveNulls(#"Changed Type"[Loan_Balance])),
+    MedianMissedPayments = List.Median(List.RemoveNulls(#"Changed Type"[Missed_Payments])),
+
+    // 4️⃣ RAW → CLEAN → FLAG
+    IncomeClean = Table.AddColumn(#"Changed Type", "Income_Clean", each if [Income]=null then MedianIncome else [Income]),
+    IncomeFlag = Table.AddColumn(IncomeClean, "Income_Flag", each if [Income]=null then "Median" else "OK"),
+
+    CreditScoreClean = Table.AddColumn(IncomeFlag, "CreditScore_Clean", each if [Credit_Score]=null then MeanCreditScore else if [Credit_Score]<300 then 300 else if [Credit_Score]>850 then 850 else [Credit_Score]),
+    CreditScoreFlag = Table.AddColumn(CreditScoreClean, "CreditScore_Flag", each if [Credit_Score]=null then "Mean" else if [Credit_Score]<300 or [Credit_Score]>850 then "Corrected" else "OK"),
+
+    AgeClean = Table.AddColumn(CreditScoreFlag, "Age_Clean", each if [Age]<18 then 18 else if [Age]>100 then 100 else [Age]),
+    AgeFlag = Table.AddColumn(AgeClean, "Age_Flag", each if [Age]<18 or [Age]>100 then "Corrected" else "OK"),
+
+    CUClean = Table.AddColumn(AgeFlag, "CU_Clean", each if [Credit_Utilization]<0 then 0 else if [Credit_Utilization]>1 then 1 else [Credit_Utilization]),
+    CUFlag = Table.AddColumn(CUClean, "CU_Flag", each if [Credit_Utilization]<0 or [Credit_Utilization]>1 then "Corrected" else "OK"),
+
+    MissedPaymentsClean = Table.AddColumn(CUFlag, "MissedPayments_Clean", each if [Missed_Payments]=null then MedianMissedPayments else if [Missed_Payments]<0 then 0 else if [Missed_Payments]>12 then 12 else [Missed_Payments]),
+    MissedPaymentsFlag = Table.AddColumn(MissedPaymentsClean, "MissedPayments_Flag", each if [Missed_Payments]=null then "Median" else if [Missed_Payments]<0 or [Missed_Payments]>12 then "Corrected" else "OK"),
+
+    LoanBalanceClean = Table.AddColumn(MissedPaymentsFlag, "LoanBalance_Clean", each if [Loan_Balance]=null then MedianLoanBalance else [Loan_Balance]),
+    LoanBalanceFlag = Table.AddColumn(LoanBalanceClean, "LoanBalance_Flag", each if [Loan_Balance]=null then "Median" else "OK"),
+
+    DelinquentClean = Table.AddColumn(LoanBalanceFlag, "Delinquent_Clean", each if [Delinquent_Account]<0 then 0 else if [Delinquent_Account]>1 then 1 else [Delinquent_Account]),
+    DelinquentFlag = Table.AddColumn(DelinquentClean, "Delinquent_Flag", each if [Delinquent_Account]<0 or [Delinquent_Account]>1 then "Corrected" else "OK"),
+
+    DTIFlag = Table.AddColumn(DelinquentFlag, "DTI_Flag", each if [Debt_to_Income_Ratio]=null then "Corrected" else if [Debt_to_Income_Ratio]<0 or [Debt_to_Income_Ratio]>1 then "OutOfRange" else "OK"),
+
+    AgeTenureFlag = Table.AddColumn(DTIFlag, "Age_Tenure_Flag", each if [Account_Tenure]>[Age_Clean] then "Invalid" else "OK"),
+
+    // 5️⃣ DYNAMIC MONTH CLEANING
+    MonthCols = List.Select(Table.ColumnNames(#"Changed Type"), each Text.StartsWith(_, "Month_")),
+    MonthCleaned = List.Accumulate(
+        MonthCols,
+        AgeTenureFlag,
+        (state, current) =>
+            let
+                merged = Table.NestedJoin(state, {current}, Mapping_Month, {"Raw Value"}, "Map", JoinKind.LeftOuter),
+                expanded = Table.ExpandTableColumn(merged, "Map", {"Clean Value","Flag_Result"}, {current & "_Clean", current & "_Flag"})
+            in
+                expanded
+    ),
+
+    // 6️⃣ LOCATION
+    LocationJoin = Table.NestedJoin(MonthCleaned, {"Location"}, Mapping_Location, {"Raw Value"}, "Map_Loc", JoinKind.LeftOuter),
+    LocationExpanded = Table.ExpandTableColumn(LocationJoin, "Map_Loc", {"Clean Value","Flag_Result"}, {"Location_Clean","Location_Flag"}),
+
+    // 7️⃣ CARD
+    CardJoin = Table.NestedJoin(LocationExpanded, {"Credit_Card_Type"}, Mapping_Card, {"Raw Value"}, "Map_Card", JoinKind.LeftOuter),
+    CardExpanded = Table.ExpandTableColumn(CardJoin, "Map_Card", {"Clean Value","Flag_Result"}, {"Card_Clean","Card_Flag"}),
+
+    // 8️⃣ EMPLOYMENT STATUS
+    EmploymentJoin = Table.NestedJoin(CardExpanded, {"Employment_Status"}, Employment_status_mapping, {"Raw Value"}, "Map_Emp", JoinKind.LeftOuter),
+    EmploymentExpanded = Table.ExpandTableColumn(EmploymentJoin, "Map_Emp", {"Clean Value","Flag_Result"}, {"Employment_status_Clean","Employment_status_Flag"}),
+
+    // 9️⃣ ROW QUALITY
+    RowQuality = Table.AddColumn(EmploymentExpanded, "RowQuality", each
+        let
+            currentRow = _,
+            monthFlags = List.Transform(MonthCols, (m) => Record.Field(currentRow, m & "_Flag")),
+            flags = {
+                currentRow[Income_Flag], currentRow[CreditScore_Flag], currentRow[Age_Flag], currentRow[CU_Flag],
+                currentRow[MissedPayments_Flag], currentRow[LoanBalance_Flag], currentRow[Delinquent_Flag],
+                currentRow[DTI_Flag], currentRow[Age_Tenure_Flag], currentRow[Employment_status_Flag],
+                currentRow[Card_Flag], currentRow[Location_Flag]
+            } & monthFlags,
+
+            hasKnownIssue = List.Contains(flags,"Invalid") or List.Contains(flags,"OutOfRange"),
+            correctionCount = List.Count(List.Select(flags, each _ <> "OK")),
+            hasUnknownFlag = List.Count(List.Select(flags, each _ <> "OK" and _ <> "Invalid" and _ <> "OutOfRange" and not Text.StartsWith(_, "Corrected"))) > 0
+        in
+            if hasKnownIssue or hasUnknownFlag then "Issue"
+            else if correctionCount>0 then "Corrected (" & Text.From(correctionCount) & ")"
+            else "OK"
+    ),
+
+    // 10️⃣ REORDER COLUMNS
+    #"Reordered Columns" = Table.ReorderColumns(RowQuality,
+        List.Combine({
+            {"Customer_ID"},
+            {"Income","Income_Clean","Income_Flag"},
+            {"Credit_Score","CreditScore_Clean","CreditScore_Flag"},
+            {"Age","Age_Clean","Age_Flag"},
+            {"Credit_Utilization","CU_Clean","CU_Flag"},
+            {"Missed_Payments","MissedPayments_Clean","MissedPayments_Flag"},
+            {"Loan_Balance","LoanBalance_Clean","LoanBalance_Flag"},
+            {"Delinquent_Account","Delinquent_Clean","Delinquent_Flag"},
+            {"Debt_to_Income_Ratio","DTI_Flag"},
+            {"Account_Tenure","Age_Tenure_Flag"},
+            {"Employment_Status","Employment_status_Clean","Employment_status_Flag"},
+            {"Credit_Card_Type","Card_Clean","Card_Flag"},
+            {"Location","Location_Clean","Location_Flag"},
+            List.Combine(List.Transform(MonthCols, each {_, _ & "_Clean", _ & "_Flag"}))
+        })
+    )
+in
+    #"Reordered Columns"
+
+// Mapping_Month
+let
+    Source = Excel.CurrentWorkbook(){[Name="Mapping_Month"]}[Content],
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Raw Value", type text}, {"Clean Value", type text}, {"Flag_Result", type text}})
+in
+    #"Changed Type"
+
+// Mapping_Location
+let
+    Source = Excel.CurrentWorkbook(){[Name="Mapping_Location"]}[Content],
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Raw Value", type text}, {"Clean Value", type text}, {"Flag_Result", type text}})
+in
+    #"Changed Type"
+
+// Mapping_Card
+let
+    Source = Excel.CurrentWorkbook(){[Name="Mapping_Card"]}[Content],
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Raw Value", type text}, {"Clean Value", type text}, {"Flag_Result", type text}})
+in
+    #"Changed Type"
+
+// Employment_status_mapping
+let
+    Source = Excel.CurrentWorkbook(){[Name="Employment_status_mapping"]}[Content],
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Raw Value", type text}, {"Clean Value", type text}, {"Flag_Result", type text}})
+in
+    #"Changed Type"
