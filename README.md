@@ -46,7 +46,7 @@ Raw Data → Data Cleaning (Power Query) → Flag Creation → Dashboard Visuali
 
 ## 🎥 Video Demo
 
-A quick walkthrough of both dashboards is included in this repository.
+A quick walkthrough of both dashboards :- https://www.linkedin.com/posts/manisha-vishvakarma-929951399_powerbi-dataanalytics-dataquality-activity-7443671029278887936-Upz5?utm_source=share&utm_medium=member_desktop&rcm=ACoAAGHZnPEBVfwZQ62klonTzdA6DBhxGdGiE9I
 
 © 2026 Manisha Vishwakarma  
 All rights reserved. This project may be viewed and downloaded for **personal or educational use only**. Commercial use or claiming it as your own is prohibited.
