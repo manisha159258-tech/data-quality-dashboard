@@ -1,6 +1,9 @@
 # Data Quality Dashboard
 
-An end-to-end data quality project demonstrating **data cleaning, transformation, and visualization** using Power BI and Power Query.
+An end-to-end data quality project demonstrating **data cleaning, transformation, and visualization** using Power BI and Power Query.<img width="1534" height="999" 
+                                                                                                                                       alt="image" src="https://github.com/user-attachments/assets/089cb06d-42c4-493e-9fc7-bbaa60bcdc65" />
+<img width="1534" height="999" alt="image" src="https://github.com/user-attachments/assets/fffbb533-26c1-4a5d-9800-dcad249bb686" />
+<img width="1638" height="1003" alt="image" src="https://github.com/user-attachments/assets/b31f9dc0-d908-49d4-a14b-05beb5af7bcb" />
 
 ---
 
