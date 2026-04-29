@@ -55,7 +55,7 @@ Raw Data → Power Query Cleaning → Validation Flags → Power BI Dashboard
 
 ## 🎥 Video Demo
 
-https://www.linkedin.com/posts/manisha-vishvakarma-929951399_powerbi-dataanalytics-dataquality-activity-7443671029278887936-Upz5?utm_source=share&utm_medium=member_desktop&rcm=ACoAAGHZnPEBVfwZQ62klonTzdA6DBhxGdGiE9I
+[https://www.linkedin.com/posts/manisha-vishvakarma-929951399_powerbi-dataanalytics-dataquality-activity-7443671029278887936-Upz5?utm_source=share&utm_medium=member_desktop&rcm=ACoAAGHZnPEBVfwZQ62klonTzdA6DBhxGdGiE9I](https://www.linkedin.com/posts/manisha-vishvakarma-929951399_powerbi-dataanalytics-dataquality-ugcPost-7449031069846355968-qOXy?utm_source=share&utm_medium=member_desktop&rcm=ACoAAGHZnPEBVfwZQ62klonTzdA6DBhxGdGiE9I)
 
 ---
 
