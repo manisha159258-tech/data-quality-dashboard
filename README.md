@@ -1,50 +1,52 @@
-# Data Quality Dashboard
+Data Quality Dashboard (Power BI | Power Query | Excel)
 
-An end-to-end data quality project demonstrating **data cleaning, transformation, and visualization** using Power BI and Power Query.
+End-to-end data quality project demonstrating how poor data can be identified, cleaned, and transformed into reliable insights for business reporting.
+
 <img width="1534" height="999" alt="image" src="https://github.com/user-attachments/assets/fffbb533-26c1-4a5d-9800-dcad249bb686" />
 <img width="1638" height="1003" alt="image" src="https://github.com/user-attachments/assets/b31f9dc0-d908-49d4-a14b-05beb5af7bcb" />
 
 ---
+📊 Business Problem
 
-## 📊 Dashboards Included
+Inconsistent and incomplete data can lead to incorrect reporting and poor decision-making. This project focuses on identifying data quality issues and improving dataset reliability.
 
-### 1. Raw Data Quality Analysis & Insights
+🔍 Key Analysis & Solution
 
-* Record-level and cell-level data quality assessment
-* Identifies missing, invalid, and inconsistent data
+• Performed record-level and field-level data quality assessment
+• Identified missing, invalid, and inconsistent values across the dataset
+• Applied Power Query transformations for cleaning and standardization
+• Created validation flags to track data issues
+• Built dashboards to monitor data quality KPIs before and after cleaning
 
-### 2. Clean Data Quality Analysis & Insights
+📈 Key Impact
 
-* Displays cleaned and standardized dataset
-* Demonstrates improvements after data correction
+• Identified ~56% data quality issues in raw dataset
+• Reduced issues to near zero after cleaning
+• Improved data reliability for reporting and analysis
+• Enabled better monitoring of data quality through dashboards
 
----
+📊 Dashboards Included
 
-## 📁 Files in this Repository
+1. Raw Data Quality Analysis
 
-* `Data_Quality_Dashboard.pbix` — Interactive Power BI report
-* `Data_Quality_Dashboard.pdf` — Static preview of dashboards
-* `Data_Quality_Demo.mp4` — 46-second demo walkthrough
-* `Processed_Data_with_Flags.xlsx` — Contains raw data, cleaned data, and mapping/flag logic
-* `Data_Cleaning_M_Code.txt` — Power Query (M) code used for cleaning and transformation
+• Highlights data issues (missing, invalid, inconsistent)
+• Shows distribution of errors across fields
 
----
+2. Clean Data Quality Dashboard
 
-## 🔄 Data Pipeline Overview
+• Displays improved dataset after transformation
+• Tracks data quality KPIs and validation status
 
-Raw Data → Data Cleaning (Power Query) → Flag Creation → Dashboard Visualization
+🔄 Data Pipeline
+Raw Data → Power Query Cleaning → Validation Flags → Dashboard (Power BI)
 
----
+📁 Project Files
 
-## ▶️ How to Use
-
-1. Download the `.pbix` file
-2. Open it in **Power BI Desktop**
-3. Explore both dashboards using filters and visuals
-
-> ⚠️ GitHub cannot display `.pbix` files online. Please download to view.
-
----
+• Data_Quality_Dashboard.pbix — Interactive report
+• Data_Quality_Dashboard.pdf — Dashboard preview
+• Data_Quality_Demo.mp4 — 46-sec walkthrough
+• Processed_Data_with_Flags.xlsx — Raw + cleaned dataset
+• Data_Cleaning_M_Code.txt — Power Query logic
 
 ## 🎥 Video Demo
 
