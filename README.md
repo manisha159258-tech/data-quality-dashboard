@@ -10,6 +10,7 @@ End-to-end data quality project demonstrating how poor data can be identified, c
 
 Inconsistent and incomplete data can lead to incorrect reporting and poor decision-making. This project focuses on identifying data quality issues and improving dataset reliability.
 
+
 🔍 Key Analysis & Solution
 
 • Performed record-level and field-level data quality assessment
@@ -22,6 +23,7 @@ Inconsistent and incomplete data can lead to incorrect reporting and poor decisi
 
 • Built dashboards to monitor data quality KPIs before and after cleaning
 
+
 📈 Key Impact
 
 • Identified ~56% data quality issues in raw dataset
@@ -31,6 +33,7 @@ Inconsistent and incomplete data can lead to incorrect reporting and poor decisi
 • Improved data reliability for reporting and analysis
 
 • Enabled better monitoring of data quality through dashboards
+
 
 📊 Dashboards Included
 
@@ -45,6 +48,7 @@ Inconsistent and incomplete data can lead to incorrect reporting and poor decisi
 • Displays improved dataset after transformation
 
 • Tracks data quality KPIs and validation status
+
 
 🔄 Data Pipeline
 Raw Data → Power Query Cleaning → Validation Flags → Dashboard (Power BI)
@@ -61,9 +65,11 @@ Raw Data → Power Query Cleaning → Validation Flags → Dashboard (Power BI)
 
 • Data_Cleaning_M_Code.txt — Power Query logic
 
+
 ## 🎥 Video Demo
 
 A quick walkthrough of both dashboards :- https://www.linkedin.com/posts/manisha-vishvakarma-929951399_powerbi-dataanalytics-dataquality-activity-7443671029278887936-Upz5?utm_source=share&utm_medium=member_desktop&rcm=ACoAAGHZnPEBVfwZQ62klonTzdA6DBhxGdGiE9I
+
 
 © 2026 Manisha Vishwakarma  
 All rights reserved. This project may be viewed and downloaded for **personal or educational use only**. Commercial use or claiming it as your own is prohibited.
